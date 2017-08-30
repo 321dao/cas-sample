@@ -1,0 +1,57 @@
+---
+title: GoCAS - Single Sign-On
+url: http://localhost:7070
+url_prefix: /cas
+template_path: template
+rest_api: false
+# trust_authentication: never | on-gateway | always
+trust_authentication: never
+
+listen: localhost:7070
+
+mongo:
+  host: 127.0.0.1
+
+#middlewares:
+#	- throttling
+
+throttling:
+  max_failures_by_ip: 5
+  max_failures_by_username: 5
+  decrement_interval: 1m
+
+services:
+  - localhost:8080
+  - 127.0.0.1:8080
+
+ticket_validity:
+  login_ticket: 120
+  ticket_granting_ticket: 3600
+  service_ticket: 30
+
+ldap:
+  host: ldap://127.0.0.1
+  base: ou=Users,dc=domain,dc=tld
+  dn: uid
+
+protocol: cas
+# protocol: oauth
+authenticator: dummy
+#authenticator: ldap
+
+radius:
+  host: 127.0.0.1
+  port: 1812
+  secret: testing123
+
+oauth:
+  clientid: XXX
+  secret: XXX
+  auth_url: https://accounts.google.com/o/oauth2/auth
+  token_url: https://accounts.google.com/o/oauth2/token
+  redirect_url: http://localhost:7070/cas/callback
+  scopes:
+    - https://www.googleapis.com/auth/userinfo.profile
+  # Should return a JSON hash with a name key
+  userinfo_url: https://www.googleapis.com/oauth2/v1/userinfo?alt=json
+  username_attribute: name
